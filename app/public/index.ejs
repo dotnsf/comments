@@ -1,0 +1,164 @@
+<%- include('./header', {}) %>
+
+<title><%= __('index.head.title') %></title>
+<script>
+$(function(){
+  $('#form').submit( function( event ){
+    event.preventDefault();
+
+    var data = {
+      id: $('#id').val(),
+      category: $('#category').val(),
+      name: $('#name').val(),
+      source: $('#source').val(),
+      url: $('#url').val(),
+      modified: $('#modified').val(),
+      body: $('#body').val()
+    };
+    //console.log( data );
+    
+    $.ajax({
+      type: 'POST',
+      url: './comment',
+      data: data,
+      success: function( data ){
+        data = JSON.parse( data );
+        console.log( data );
+        /*
+        if( data ){
+          if( data.status ){
+            alert( data.result );
+            getItems();
+          }else{
+            alert( data.result );
+          }
+        }else{
+          alert( 'error: POST /item' );
+        }
+        */
+      },
+      error: function(){
+        console.log( 'error' );
+      }
+    });
+
+    return false;
+  });
+});
+
+function getComments(){
+  $('#comments_table_tbody').html( '' );
+  var obj = getBusyOverlay( 'viewport', {color:'black', opacity:0.5, text:'loading', style:'text-decoration:blink; font-weight:bold; font-size:12px; color:white;' } );
+  $.ajax({
+    type: 'GET',
+    url: '/comments',
+    success: function( result ){
+      obj.remove();
+      console.log( result );
+        /*
+      var comments = result.result;
+      comments.forEach( comments => {
+        var owner_id = '';
+        var n = item.owner.indexOf( '#' );
+        if( n > -1 ){
+          owner_id = item.owner.substring( n + 1, item.owner.length - 1 );
+        }
+
+        var tr = "<tr><td>" + item.id.substring( 0, 10 )
+          + "..</td><td>" + item.rev
+          + "</td><td>" + item.name
+          + "</td><td>" + item.hash.substring( 0, 10 )
+          + "..</td><td>" + owner_id
+          + "</td><td>" + item.modified
+          + "</td><td>" + item.datetime
+          + "</td><td><input type='button' class='btn btn-default' value='<%= __('items.buttonlabel.delete') %>' onClick='deleteItem(\"" + item.id + "\")'/>"
+          + "</td></tr>";
+        $('#comments_table_tbody').append( tr );
+      });
+        */
+    },
+    error: function( err ){
+      obj.remove();
+      console.log( err );
+    }
+  });
+}
+
+function deleteComment(id){
+  if( window.confirm( '<%= __('items.confirm.delete') %>' + id + ' ?' ) ){
+    $.ajax({
+      type: 'DELETE',
+      url: '/comment',
+      data: { id: id },
+      success: function( data ){
+        window.location.href = '/';
+      },
+      error: function(){
+        window.location.href = '/';
+      }
+    });
+  }
+}
+</script>
+</head>
+<body>
+
+<div class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a href="/" class="navbar-brand">Comments</a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="collapse navbar-collapse target">
+      <ul class="nav navbar-nav navbar-right" id="navbar">
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <form method="POST" id="form" action="./comment">
+    <div class="form-group">
+      <input type="text" id="id" class="form-control" name="id" placeholder="<%= __('comments.placeholder.id') %>"/><br/>
+      <input type="text" id="category" class="form-control" name="category" placeholder="<%= __('comments.placeholder.category') %>"/><br/>
+      <input type="text" id="name" class="form-control" name="name" placeholder="<%= __('comments.placeholder.name') %>"/><br/>
+      <!--
+      <input type="text" id="body" class="form-control" name="body" placeholder="<%= __('comments.placeholder.body') %>"/><br/>
+    -->
+      <input type="text" id="source" class="form-control" name="source" placeholder="<%= __('comments.placeholder.source') %>"/><br/>
+      <input type="text" id="url" class="form-control" name="url" placeholder="<%= __('comments.placeholder.url') %>"/><br/>
+      <input type="text" id="modified" class="form-control" name="modified" placeholder="<%= __('comments.placeholder.modified') %>"/><br/>
+      <textarea id="body" class="form-control" name="body" placeholder="<%= __('comments.placeholder.body') %>"></textarea><br/>
+    </div>
+    <input type="submit" value="Post" class="btn btn-info"/>
+  </form>
+</div>
+
+<div class="container-fluid" style="padding:20px 0; font-size:8px;">
+  <table class="table table-hover table-bordered" id="comments_table">
+    <thead class="table-inverse">
+      <tr>
+        <tr><th bgcolor="#ddddff" colspan="11"><%= __('comments.head.title') %></th></tr>
+        <th><%= __('comments.table.id') %></th>
+        <th><%= __('comments.table.rev') %></th>
+        <th><%= __('comments.table.category') %></th>
+        <th><%= __('comments.table.name') %></th>
+        <th><%= __('comments.table.body') %></th>
+        <th><%= __('comments.table.source') %></th>
+        <th><%= __('comments.table.url') %></th>
+        <th><%= __('comments.table.hash') %></th>
+        <th><%= __('comments.table.modified') %></th>
+        <th><%= __('comments.table.datetime') %></th>
+        <th><%= __('comments.table.action') %></th>
+      </tr>
+    </thead>
+    <tbody id="comments_table_tbody">
+    </tbody>
+  </table>
+</div>
+
+<%- include('./footer', {}) %>

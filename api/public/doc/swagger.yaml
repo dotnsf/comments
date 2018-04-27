@@ -1,0 +1,154 @@
+swagger: '2.0'
+info:
+  description: Comments on Hyperledger Fabric API Document
+  version: 0.0.1
+  title: Comments Platform on Hyperledger Fabric REST API
+host: localhost:3001
+basePath: /
+tags:
+  - name: comment
+    description: APIs for Comment
+schemes:
+  - http
+  - https
+paths:
+  /api/comment:
+    get:
+      tags:
+        - comment
+      summary: Get a comment
+      description: Get single comment information from id.
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          type: string
+          in: query
+          description: Comment ID
+          required: true
+      responses:
+        '200':
+          description: Success
+        '401':
+          description: Access error
+        '404':
+          description: Failed to find item
+        '500':
+          description: Server error
+    post:
+      tags:
+        - comment
+      summary: Create/Update comment
+      description: Create new comment, or Update existing comment information
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          schema:
+            $ref: '#/definitions/CommentRequest'
+      responses:
+        '200':
+          description: Success
+        '401':
+          description: Access error
+        '500':
+          description: Server error
+    delete:
+      tags:
+        - comment
+      summary: Delete comment
+      description: Delete specified comment.
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          type: string
+          in: body
+          description: Comment ID
+          required: true
+      responses:
+        '200':
+          description: Success
+        '401':
+          description: Access error
+        '404':
+          description: Failed to find comment
+        '500':
+          description: Server error
+  /api/comments:
+    get:
+      tags:
+        - comment
+      summary: Get comments
+      description: Get multiple comments information.
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Success
+        '401':
+          description: Access error
+        '500':
+          description: Server error
+definitions:
+  CommentRequest:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Comment ID
+      category:
+        type: string
+        description: Comment category
+      name:
+        type: string
+        description: Name of Comment creator
+      body:
+        type: string
+        description: Comment body
+      source:
+        type: string
+        description: Comment source
+      url:
+        type: string
+        description: URL of Comment reference
+      hash:
+        type: string
+        description: Hash value of Comment reference
+      modified:
+        type: string
+        description: Comment issued datetime
+  CommentResult:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Comment ID
+      rev:
+        type: integer
+        description: Comment revision
+      category:
+        type: string
+        description: Comment category
+      name:
+        type: string
+        description: Name of Comment creator
+      body:
+        type: string
+        description: Comment body
+      source:
+        type: string
+        description: Comment source
+      url:
+        type: string
+        description: URL of Comment reference
+      hash:
+        type: string
+        description: Hash value of Comment reference
+      modified:
+        type: string
+        description: Comment issued datetime
+      datetime:
+        type: string
+        description: datetime
